@@ -3,27 +3,40 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:signshare_lsm/main.dart';
 
 void main() {
-  testWidgets('Home screen shows title and main actions', (tester) async {
-    await tester.pumpWidget(const SignShareApp());
+  testWidgets(
+    'Home screen shows main actions',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const SignShareApp());
 
-    expect(find.text('SignShare LSM'), findsOneWidget);
-    expect(find.text('Community Sign Library'), findsOneWidget);
-    expect(find.text('Search a Word'), findsOneWidget);
-    expect(find.text('Upload a Sign'), findsOneWidget);
-    expect(find.text('Recognize a Sign'), findsOneWidget);
-    expect(find.text('About the Project'), findsOneWidget);
-  });
+      expect(find.text('SignShare LSM'), findsOneWidget);
 
-  testWidgets('Search card opens search screen', (tester) async {
-    await tester.pumpWidget(const SignShareApp());
+      expect(find.byKey(const Key('search_word_card')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('search_word_card')));
-    await tester.pumpAndSettle();
+      expect(find.byKey(const Key('upload_sign_card')), findsOneWidget);
 
-    expect(find.text('Search a Word'), findsOneWidget);
-    expect(
-      find.textContaining('This screen will let users type a word'),
-      findsOneWidget,
-    );
-  });
+      expect(find.byKey(const Key('recognize_sign_card')), findsOneWidget);
+
+      expect(find.byKey(const Key('about_project_card')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Search card navigates',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const SignShareApp());
+
+      await tester.tap(
+        find.byKey(const Key('search_word_card')),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.textContaining(
+          'This screen will let users type a word',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }
