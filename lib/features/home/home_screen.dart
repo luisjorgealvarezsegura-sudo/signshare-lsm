@@ -53,16 +53,15 @@ class HomeScreen extends StatelessWidget {
                           AppRoutes.upload,
                         ),
                       ),
-                      HomeCard(
+                     HomeCard(
                         key: const Key('recognize_sign_card'),
                         title: AppStrings.recognition,
                         subtitle:
-                            'Record a sign and compare it against saved examples.',
+                           'Compare a sign against examples',
                         icon: Icons.pan_tool_alt_rounded,
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          AppRoutes.recognition,
-                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/recognition');
+                        },
                       ),
                       HomeCard(
                         key: const Key('about_project_card'),
