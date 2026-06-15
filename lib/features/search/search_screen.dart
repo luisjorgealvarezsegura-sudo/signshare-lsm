@@ -1,90 +1,99 @@
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+import '../../models/sign_video.dart';
+import 'demo_sign_repository.dart';
+import 'sign_video_tile.dart';
+
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const _FeaturePlaceholderScreen(
-      title: 'Search a Word',
-      icon: Icons.search_rounded,
-      message:
-          'This screen will let users type a word like “hola” and view every uploaded sign video tagged with that word.',
-      nextStep: 'Next build task: add a search field and sample video cards.',
-    );
-  }
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _FeaturePlaceholderScreen extends StatelessWidget {
-  const _FeaturePlaceholderScreen({
-    required this.title,
-    required this.icon,
-    required this.message,
-    required this.nextStep,
-  });
-
-  final String title;
-  final IconData icon;
-  final String message;
-  final String nextStep;
+class _SearchScreenState extends State<SearchScreen> {
+  String query = '';
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final results = DemoSignRepository.signs.where((sign) {
+      return sign.wordKey.contains(
+        query.toLowerCase(),
+      );
+    }).toList();
+
+    final groupedResults = <String, List<SignVideo>>{};
+
+    for (final sign in results) {
+      groupedResults.putIfAbsent(sign.word, () => []);
+      groupedResults[sign.word]!.add(sign);
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 620),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Icon(icon, size: 72, color: colorScheme.primary),
-                  const SizedBox(height: 24),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    style: textTheme.bodyLarge?.copyWith(height: 1.45),
-                  ),
-                  const SizedBox(height: 24),
-                  Card(
-                    color: colorScheme.secondaryContainer,
-                    child: Padding(
-                      padding: const EdgeInsets.all(18),
-                      child: Text(
-                        nextStep,
-                        textAlign: TextAlign.center,
-                        style: textTheme.titleMedium?.copyWith(
-                          color: colorScheme.onSecondaryContainer,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    label: const Text('Back to Home'),
-                  ),
-                ],
+      appBar: AppBar(
+        title: const Text('Search a Word'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'Search a word...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                setState(() {
+                  query = value.trim();
+                });
+              },
             ),
-          ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: groupedResults.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No signs found.',
+                      ),
+                    )
+                  : ListView(
+                      children: groupedResults.entries.map((entry) {
+                        final word = entry.key;
+                        final videos = entry.value;
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  word,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${videos.length} community sign variation(s)',
+                                ),
+                                const SizedBox(height: 12),
+                                ...videos.map(
+                                  (video) => SignVideoTile(
+                                    video: video,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+            ),
+          ],
         ),
       ),
     );
