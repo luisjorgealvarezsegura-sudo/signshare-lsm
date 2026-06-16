@@ -8,7 +8,7 @@ void main() {
     expect(find.text('SignShare LSM'), findsOneWidget);
   });
 
-  testWidgets('Search card exists', (tester) async {
+  testWidgets('Home screen shows search entry point', (tester) async {
     await tester.pumpWidget(const SignShareApp());
 
     expect(find.textContaining('Search'), findsWidgets);

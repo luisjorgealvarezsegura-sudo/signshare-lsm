@@ -3,7 +3,7 @@ import '../../models/sign_video.dart';
 class DemoSignRepository {
   static const signs = [
     SignVideo(
-      id: '1',
+      id: 'demo-1',
       word: 'Hola',
       wordKey: 'hola',
       videoUrl: '',
@@ -13,7 +13,7 @@ class DemoSignRepository {
       uploader: 'Luis',
     ),
     SignVideo(
-      id: '2',
+      id: 'demo-2',
       word: 'Hola',
       wordKey: 'hola',
       videoUrl: '',
@@ -23,7 +23,7 @@ class DemoSignRepository {
       uploader: 'Maria',
     ),
     SignVideo(
-      id: '3',
+      id: 'demo-3',
       word: 'Gracias',
       wordKey: 'gracias',
       videoUrl: '',
@@ -33,7 +33,7 @@ class DemoSignRepository {
       uploader: 'Jose',
     ),
     SignVideo(
-      id: '4',
+      id: 'demo-4',
       word: 'Agua',
       wordKey: 'agua',
       videoUrl: '',
@@ -43,7 +43,7 @@ class DemoSignRepository {
       uploader: 'Ana',
     ),
     SignVideo(
-      id: '5',
+      id: 'demo-5',
       word: 'Ayuda',
       wordKey: 'ayuda',
       videoUrl: '',
