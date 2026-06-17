@@ -2,9 +2,13 @@ name: Android Build
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:
@@ -21,7 +25,15 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Show Flutter version
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 36
+        run: |
+          sdkmanager "platforms;android-36"
+          sdkmanager "build-tools;36.0.0"
+
+      - name: Flutter version
         run: flutter --version
 
       - name: Get dependencies
@@ -30,13 +42,13 @@ jobs:
       - name: Analyze project
         run: flutter analyze
 
-      - name: Run widget tests
+      - name: Run tests
         run: flutter test
 
-      - name: Build debug APK
+      - name: Build Debug APK
         run: flutter build apk --debug
 
-      - name: Upload debug APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: signshare-lsm-debug-apk
