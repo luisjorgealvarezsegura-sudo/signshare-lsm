@@ -33,12 +33,6 @@ jobs:
       - name: Run widget tests
         run: flutter test
 
-      - name: Generate Android platform files
-        run: flutter create --platforms=android --org com.signshare --project-name signshare_lsm .
-
-      - name: Get dependencies again after Android generation
-        run: flutter pub get
-
       - name: Build debug APK
         run: flutter build apk --debug
 
