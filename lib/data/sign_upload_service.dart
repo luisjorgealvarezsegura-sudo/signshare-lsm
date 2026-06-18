@@ -17,7 +17,7 @@ class SignUploadService {
         '${DateTime.now().millisecondsSinceEpoch}.mp4';
 
     await SupabaseService.client.storage
-        .from('videos')
+        .from('HUET')
         .upload(
           fileName,
           videoFile,
@@ -25,7 +25,7 @@ class SignUploadService {
 
     final videoUrl =
         SupabaseService.client.storage
-            .from('videos')
+            .from('HUET')
             .getPublicUrl(fileName);
 
     await SupabaseService.client
