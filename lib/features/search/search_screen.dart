@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/sign_video.dart';
-import 'demo_sign_repository.dart';
+import '../../services/sign_upload_service.dart';
 import 'sign_video_tile.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _signsFuture = _loadAllSigns();
+    _signsFuture = SignUploadService.searchSigns('');
   }
 
   @override
@@ -30,13 +30,18 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  Future<List<SignVideo>> _loadAllSigns() async {
-  return DemoSignRepository.signs;
-}
+  void _search(String value) {
+    final q = value.trim().toLowerCase();
+
+    setState(() {
+      query = q;
+      _signsFuture = SignUploadService.searchSigns(q);
+    });
+  }
 
   void _refreshSigns() {
     setState(() {
-      _signsFuture = _loadAllSigns();
+      _signsFuture = SignUploadService.searchSigns(query);
     });
   }
 
@@ -62,17 +67,20 @@ class _SearchScreenState extends State<SearchScreen> {
             );
           }
 
-          final signs = snapshot.data ?? const <SignVideo>[];
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+              ),
+            );
+          }
+
+          final signs = snapshot.data ?? [];
 
           return _SearchContent(
             signs: signs,
-            query: query,
             searchController: _searchController,
-            onQueryChanged: (value) {
-              setState(() {
-                query = value.trim().toLowerCase();
-              });
-            },
+            onQueryChanged: _search,
           );
         },
       ),
@@ -83,26 +91,21 @@ class _SearchScreenState extends State<SearchScreen> {
 class _SearchContent extends StatelessWidget {
   const _SearchContent({
     required this.signs,
-    required this.query,
     required this.searchController,
     required this.onQueryChanged,
   });
 
   final List<SignVideo> signs;
-  final String query;
   final TextEditingController searchController;
   final ValueChanged<String> onQueryChanged;
 
   @override
   Widget build(BuildContext context) {
-    final filteredSigns = query.isEmpty
-        ? signs
-        : signs.where((sign) => sign.wordKey.contains(query)).toList();
-
     final groupedResults = <String, List<SignVideo>>{};
 
-    for (final sign in filteredSigns) {
-      final groupKey = sign.wordKey.isEmpty ? sign.word.toLowerCase() : sign.wordKey;
+    for (final sign in signs) {
+      final groupKey =
+          sign.wordKey.isEmpty ? sign.word.toLowerCase() : sign.wordKey;
 
       groupedResults.putIfAbsent(groupKey, () => <SignVideo>[]);
       groupedResults[groupKey]!.add(sign);
@@ -137,11 +140,14 @@ class _SearchContent extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
                                 word,
-                                style: Theme.of(context).textTheme.headlineSmall,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall,
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -149,7 +155,8 @@ class _SearchContent extends StatelessWidget {
                               ),
                               const SizedBox(height: 12),
                               ...videos.map(
-                                (video) => SignVideoTile(video: video),
+                                (video) =>
+                                    SignVideoTile(video: video),
                               ),
                             ],
                           ),
