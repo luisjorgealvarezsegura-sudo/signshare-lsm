@@ -142,19 +142,19 @@ class _UploadScreenState
           const SizedBox(height: 12),
 
           DropdownButtonFormField<String>(
-            value: _language,
-            items: const [
-              DropdownMenuItem(
-                value: 'LSM',
-                child: Text('LSM'),
-              ),
-            ],
-            onChanged: (value) {
-              setState(() {
-                _language = value!;
-              });
-            },
-          ),
+          initialValue: _language,
+          items: const [
+            DropdownMenuItem(
+              value: 'LSM',
+              child: Text('LSM'),
+            ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _language = value!;
+            });
+          },
+        ),
 
           const SizedBox(height: 20),
 
