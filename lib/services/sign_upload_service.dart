@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import '../models/sign_video.dart';
 import 'supabase_service.dart';
 
@@ -16,6 +15,7 @@ class SignUploadService {
     final fileName =
         '${DateTime.now().millisecondsSinceEpoch}.mp4';
 
+    // Upload file to Storage bucket
     await SupabaseService.client.storage
         .from('HUET')
         .upload(
@@ -23,13 +23,15 @@ class SignUploadService {
           videoFile,
         );
 
+    // Get public URL
     final videoUrl =
         SupabaseService.client.storage
             .from('HUET')
             .getPublicUrl(fileName);
 
+    // Save metadata to signs table
     await SupabaseService.client
-        .from('HUET')
+        .from('signs')
         .insert({
       'word': word,
       'word_key': word.toLowerCase(),
@@ -46,7 +48,7 @@ class SignUploadService {
   ) async {
     final response =
         await SupabaseService.client
-            .from('HUET')
+            .from('signs')
             .select()
             .ilike(
               'word_key',
@@ -55,14 +57,14 @@ class SignUploadService {
 
     return response.map<SignVideo>((json) {
       return SignVideo(
-        id: json['id'],
-        word: json['word'],
-        wordKey: json['word_key'],
-        videoUrl: json['video_url'],
-        country: json['country'],
-        region: json['region'],
-        language: json['language'],
-        uploader: json['uploader'],
+        id: json['id'].toString(),
+        word: json['word'] ?? '',
+        wordKey: json['word_key'] ?? '',
+        videoUrl: json['video_url'] ?? '',
+        country: json['country'] ?? '',
+        region: json['region'] ?? '',
+        language: json['language'] ?? '',
+        uploader: json['uploader'] ?? '',
       );
     }).toList();
   }
