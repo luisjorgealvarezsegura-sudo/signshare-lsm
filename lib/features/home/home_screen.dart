@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisCount: isWide ? 2 : 1,
                     mainAxisSpacing: 14,
                     crossAxisSpacing: 14,
-                    childAspectRatio: isWide ? 2.6 : 2.7,
+                    childAspectRatio: isWide ? 2.6 : 3.4,
                     children: [
                       HomeCard(
                         key: const Key('search_word_card'),
